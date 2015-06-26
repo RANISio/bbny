@@ -1,0 +1,29 @@
+#!/bin/bash
+PATH=/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+
+DIR=/Users/bbnytech/Lessons
+DATE=`date +%Y-%m-%d`
+
+times=()
+
+for f in $DIR/$DATE/*.mp3; do
+	_t=$(ffprobe "$f" 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// | awk -F: '{print $2":"$3 }')
+	times+=("$_t")
+done
+
+sorted=($(printf '%s\n' "${times[@]}" | sort))
+
+min=$(echo ${sorted[0]} | awk -F: '{print $1*1}') #find the smallest minute
+
+ht=$(ffprobe $DIR/$DATE/heb.mp3 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// | awk -F: '{print 0 ":" $2-"'"$min"'" ":" $3}')
+rt=$(ffprobe $DIR/$DATE/rus.mp3 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// | awk -F: '{print 0 ":" $2-"'"$min"'" ":" $3}')
+et=$(ffprobe $DIR/$DATE/eng.mp3 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// | awk -F: '{print 0 ":" $2-"'"$min"'" ":" $3}')
+
+hd=$(mplayer -ao coreaudio:device_id=list /System/Library/Sounds/frog.aiff 2>&1 | grep Hebrew | cut -d " " -f 3 | sed s/\)//) 
+rd=$(mplayer -ao coreaudio:device_id=list /System/Library/Sounds/frog.aiff 2>&1 | grep Russian | cut -d " " -f 3 | sed s/\)//) 
+ed=$(mplayer -ao coreaudio:device_id=list /System/Library/Sounds/frog.aiff 2>&1 | grep English | cut -d " " -f 3 | sed s/\)//) 
+
+mplayer -ss $ht -ao coreaudio:device_id=$hd -really-quiet -geometry 1700:0 -fs $DIR/$DATE/heb.flv &
+mplayer -ss $et -ao coreaudio:device_id=$ed -really-quiet -geometry 1700:0 $DIR/$DATE/eng.flv &
+mplayer -ss $rt -ao coreaudio:device_id=$rd -really-quiet -geometry 1700:0 $DIR/$DATE/rus.flv &

@@ -1,0 +1,39 @@
+#!/usr/bin/perl -w
+
+use warnings;
+use strict;
+use Time::Piece;
+
+my $date = localtime->strftime('%Y-%m-%d');
+
+my $dir = "/Users/bbnytech/Lessons/$date/";
+
+my $devices = `mplayer -ao coreaudio:device_id=list /System/Library/Sounds/frog.aiff 2>&1`;
+
+my ($hd) = $devices =~ /Hebrew \(id: (\d+)/;
+my ($rd) = $devices =~ /Russian \(id: (\d+)/;
+my ($ed) = $devices =~ /English \(id: (\d+)/;
+
+opendir (DIR, $dir) or die "Can't open directory $dir: $!\n";
+
+my @hebFiles = ();
+my @rusFiles = ();
+my @engFiles = (); 
+
+while (my $file = readdir DIR) {
+	if($file =~ /heb/i) {
+		push @hebFiles, $dir . $file;
+	} elsif ($file =~ /rus/i) {
+		push @rusFiles, $dir . $file;
+	} elsif ($file =~ /eng/i) {
+		push @engFiles, $dir . $file;
+	}
+}
+
+my $command =  "mplayer -ao coreaudio:device_id=$ed -geometry 1700:0 " . join(' ', @engFiles) .
+	" & mplayer -ao coreaudio:device_id=$rd -geometry 1700:0 " . join(' ', @rusFiles) .
+	" & mplayer -ao coreaudio:device_id=$hd -geometry 1700:0 -fs " . join(' ', @hebFiles);
+
+`$command`;
+
+`exit`;

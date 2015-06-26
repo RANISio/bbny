@@ -1,0 +1,11 @@
+#!/bin/bash
+PATH=/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+
+DIR=/Users/bbnytech/Lessons
+DATE=`date +%Y-%m-%d`
+
+for f in $DIR/$DATE/*.mp3; do
+	_t=$(ffprobe "$f" 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,//)
+	echo $f": "$_t
+done
