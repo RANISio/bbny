@@ -7,17 +7,21 @@ use File::Path qw(make_path);
 
 my $date = localtime->strftime('%Y-%m-%d');
 my $dir = "/home/bbny/Lessons/$date/";
+#my $dir = "/Users/bbnytech/Lessons/$date/";
+my $conv = "avconv";
+#my $conv = "ffmpeg";
+
 
 make_path($dir);
 
 my $command=	'cd ' . $dir . ' && (' .
-		'rtmpdump -r "rtmp://edge1.uk.kab.tv/rtplive/live2-heb-medium.stream" -w 97887f3226ed7c419f71b2baaf4b460c8fa8e31aa58c2ffe758ba3fb32565b04 -s "http://www.kabbalahgroup.info/internet/flowplayer/flowplayer.rtmp-3.2.12.swf" -x 5810 -m 300 -o heb.flv & ' . 
- 		'rtmpdump -r "rtmp://edge1.uk.kab.tv/rtplive/live2-rus-low.stream" -w 97887f3226ed7c419f71b2baaf4b460c8fa8e31aa58c2ffe758ba3fb32565b04 -s "http://www.kabbalahgroup.info/internet/flowplayer/flowplayer.rtmp-3.2.12.swf" -x 5810 -m 300 -o rus.flv & ' .
- 		'rtmpdump -r "rtmp://edge1.uk.kab.tv/rtplive/live2-eng-low.stream" -w 97887f3226ed7c419f71b2baaf4b460c8fa8e31aa58c2ffe758ba3fb32565b04 -s "http://www.kabbalahgroup.info/internet/flowplayer/flowplayer.rtmp-3.2.12.swf" -x 5810 -m 300 -o eng.flv' .
-		') && (' .
-		'avconv -i heb.flv -vn -ar 44100 -ac 2 -ab 48k -f mp3 heb.mp3 & ' .
-		'avconv -i rus.flv -vn -ar 44100 -ac 2 -ab 48k -f mp3 rus.mp3 & ' .
-		'avconv -i eng.flv -vn -ar 44100 -ac 2 -ab 48k -f mp3 eng.mp3' .
-		') && exit';
+'rtmpdump -r "rtmp://edge1.uk.kab.tv/rtplive/live2-heb-medium.stream" -w 97887f3226ed7c419f71b2baaf4b460c8fa8e31aa58c2ffe758ba3fb32565b04 -s "http://www.kabbalahgroup.info/internet/flowplayer/flowplayer.rtmp-3.2.12.swf" -x 5810 -m 300 -o heb.flv & ' . 
+'rtmpdump -r "rtmp://edge1.uk.kab.tv/rtplive/live2-rus-low.stream" -w 97887f3226ed7c419f71b2baaf4b460c8fa8e31aa58c2ffe758ba3fb32565b04 -s "http://www.kabbalahgroup.info/internet/flowplayer/flowplayer.rtmp-3.2.12.swf" -x 5810 -m 300 -o rus.flv & ' .
+'rtmpdump -r "rtmp://edge1.uk.kab.tv/rtplive/live2-eng-low.stream" -w 97887f3226ed7c419f71b2baaf4b460c8fa8e31aa58c2ffe758ba3fb32565b04 -s "http://www.kabbalahgroup.info/internet/flowplayer/flowplayer.rtmp-3.2.12.swf" -x 5810 -m 300 -o eng.flv' .
+') && (' .
+$conv . ' -i heb.flv -vn -ar 44100 -ac 2 -ab 48k -f mp3 heb.mp3 & ' .
+$conv . ' -i rus.flv -vn -ar 44100 -ac 2 -ab 48k -f mp3 rus.mp3 & ' .
+$conv . ' -i eng.flv -vn -ar 44100 -ac 2 -ab 48k -f mp3 eng.mp3' .
+') && exit';
 
 `$command`;
